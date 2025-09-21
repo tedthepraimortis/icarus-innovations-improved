@@ -268,7 +268,7 @@ class HDPDFour : HDWeapon {
 				}
 
 				if (invoker.weaponStatus[PDS_FIREMODE] == 2) {
-					A_SetTics(2);
+					A_SetTics(3);
 				}
 
 				A_WeaponReady(WRF_NOFIRE);
@@ -300,7 +300,7 @@ class HDPDFour : HDWeapon {
 				int heat = min(50, invoker.weaponStatus[PDS_HEAT]);
 
 				HDBulletActor.FireBullet(self, "HDB_426", spread: heat > 20 ? heat * 0.2 : 0, speedfactor: 0.9);
-				A_AlertMonsters(HDCONST_ONEMETRE * (15 + heat));
+				A_AlertMonsters(HDCONST_ONEMETRE * (13 + heat));
 
 				A_StartSound("PD42/Fire", CHAN_WEAPON);
 				
