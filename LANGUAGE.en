@@ -341,6 +341,7 @@ UMP_HELPTEXT_3 = " Reload chamber\n";
 // USP
 USP_HELPTEXT_1 = " Reload mag\n";
 USP_HELPTEXT_2 = " Reload chamber\n";
+USP_HELPTEXT_3 = " Rack slide\n";
 
 // Misc
 WALLET_TEXT1 = "\cq$ $ $ \cdWallet\cq $ $ $";

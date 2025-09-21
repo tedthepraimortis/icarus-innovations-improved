@@ -77,6 +77,7 @@ class HDUSP : HDHandgun
 		LocalizeHelp();
 		return 
 		LWPHELP_FIRESHOOT
+		..LWPHELP_ALTFIRE..Stringtable.Localize("$USP_HELPTEXT_3")
 		..LWPHELP_RELOAD..Stringtable.Localize("$USP_HELPTEXT_1")
 		..LWPHELP_USE.."+"..LWPHELP_RELOAD..Stringtable.Localize("$USP_HELPTEXT_2")
 		..LWPHELP_MAGMANAGER;
@@ -183,7 +184,8 @@ class HDUSP : HDHandgun
 				}
 				else if (invoker.WeaponStatus[USProp_Mag] > 0)
 				{
-					SetWeaponState("ChamberManual");
+					//SetWeaponState("ChamberManual");
+					SetWeaponState("nope");
 				}
 			}
 			Goto Nope;
@@ -194,7 +196,7 @@ class HDUSP : HDHandgun
 
 				A_Light1();
 				A_StartSound("USP/Fire", CHAN_WEAPON);
-				HDBulletActor.FireBullet(self, "HDB_45ACP", spread: 1.0);
+				HDBulletActor.FireBullet(self, "HDB_45ACP", spread: 1.0, speedfactor: 0.92);
 				A_AlertMonsters();
 				A_ZoomRecoil(1.05);
 				A_MuzzleClimb(-frandom(0.1, 0.5), -frandom(1.0, 2.5));
@@ -216,7 +218,7 @@ class HDUSP : HDHandgun
 					A_StartSound("weapons/pistoldry", 8, CHANF_OVERLAP, 0.9);
 					SetWeaponState("Nope");
 				}
-				else
+				else if (random(0,450)>1)
 				{
 					A_Light0();
 					invoker.WeaponStatus[USProp_Chamber] = 2;
@@ -269,7 +271,8 @@ class HDUSP : HDHandgun
 				}
 				else if (invoker.WeaponStatus[USProp_Chamber] > 0)
 				{
-					SetWeaponState('ChamberManual');
+					//SetWeaponState('ChamberManual');
+					SetWeaponState('nope');
 				}
 			}
 			Goto Nope;
@@ -325,9 +328,10 @@ class HDUSP : HDHandgun
 			}
 			USPG A 1 A_UpdateSlideFrame();
 			USPG # 1 Offset(0, 32);
-			USPG # 0 A_JumpIf(!(invoker.WeaponStatus[USProp_Flags] & USF_JustUnload) && (invoker.WeaponStatus[USProp_Chamber] < 2 && invoker.WeaponStatus[USProp_Mag] > 0), 'ChamberManual');
+			//USPG # 0 A_JumpIf(!(invoker.WeaponStatus[USProp_Flags] & USF_JustUnload) && (invoker.WeaponStatus[USProp_Chamber] < 2 && invoker.WeaponStatus[USProp_Mag] > 0), 'ChamberManual');
 			Goto Nope;
 
+		Altfire:
 		ChamberManual:
 			USPG # 3 Offset(0, 34) A_UpdateSlideFrame();
 			USPG # 4 Offset(0, 37)
@@ -344,7 +348,10 @@ class HDUSP : HDHandgun
 						case 2: A_SpawnItemEx('HD45ACPAmmo', cos(pitch * 12), 0, height - 9 - sin(pitch) * 12, 1, 2, 3, 0); break;
 					}
 				}
-
+				A_UpdateSlideFrame();
+			}
+			USPG # 3 Offset(0, 35)
+			{
 				if (invoker.WeaponStatus[USProp_Mag] > 0)
 				{
 					invoker.WeaponStatus[USProp_Chamber] = 2;
@@ -353,7 +360,6 @@ class HDUSP : HDHandgun
 				}
 				A_UpdateSlideFrame();
 			}
-			USPG # 3 Offset(0, 35);
 			Goto Nope;
 
 		LoadChamber:
