@@ -772,9 +772,10 @@ class HDPDFourMag : HDMagAmmo {
 		owner.A_TakeInventory(roundtype, 1, TIF_NOTAKEINFINITE);
 		owner.A_StartSound("weapons/rifleclick2", 7);
 
-		if (random(0,100) <= 10) {
-			owner.A_StartSound("weapons/bigcrack", 8, CHANF_OVERLAP);
-			owner.A_SpawnItemEx("WallChunk", 12, 0, owner.height - 12, 4, frandom(-2, 2), frandom(2, 4));
+		if (random(0,100) <= 25) {
+			owner.A_StartSound("magmanager/426shatter", 8, CHANF_OVERLAP);
+			owner.A_SpawnItemEx("HDSmokeChunk", 12, 0, owner.height - 12, 4, frandom(-2, 2), frandom(2, 4));
+			owner.damagemobj(self,owner,1,"hot",DMG_NO_ARMOR);
 			return false;
 		}
 		owner.A_StartSound("weapons/pocket", 9, volume: frandom(0.1, 0.6));
