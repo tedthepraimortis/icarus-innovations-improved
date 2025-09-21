@@ -267,11 +267,7 @@ class HDFenris : HDCellWeapon
 				A_FireProjectile("Snowball", spawnheight: (-10.0 * cos(-pitch)) * player.crouchfactor);
 				A_AlertMonsters();
 				A_MuzzleClimb(-frandom(-0.4, 0.4), -frandom(1.5, 1.8), -frandom(-0.6, 0.6), -frandom(1.8, 2.0));
-				if (BackupSynergy.CheckForItem(self, "HDGFBlaster"))
-				{
-					invoker.WeaponStatus[FNProp_Battery] -= 12;
-				}
-				else invoker.WeaponStatus[FNProp_Battery] -= 20;
+				invoker.WeaponStatus[FNProp_Battery] -= 12;
 			}
 			#### A 1 Offset(0, 42);
 			#### A 1 Offset(0, 36);
@@ -485,7 +481,7 @@ class FenrisRayImpact : Actor
 		+FORCERADIUSDMG
 		+NOBLOOD
 		Decal "FenrisScorch";
-		DamageType "Cold";
+		DamageType "Electrical";
 	}
 
 	States
@@ -515,7 +511,7 @@ class Snowball : HDActor
 		Speed 40;
 		Gravity 0.05;
 		DamageFunction (random (300, 350));
-		DamageType "Cold";
+		DamageType "Electrical";
 		DeathSound "Fenris/SBExplode";
 		Alpha 0.9;
 		Scale 1.0;
@@ -540,7 +536,7 @@ class Snowball : HDActor
 		death:
 			TNT1 A 0
 			{
-				A_HDBlast(HDCONST_ONEMETRE * 4, random(100,120), HDCONST_ONEMETRE * 2, "Cold");
+				A_HDBlast(HDCONST_ONEMETRE * 4, random(100,120), HDCONST_ONEMETRE * 2, "Electrical");
 				A_SpawnChunks("HDB_frag", 42, 100, 700);
 				A_SpawnChunks("BigWallChunk", 14, 4, 12);
 			}
@@ -601,14 +597,5 @@ class SnowballLight : PointLight
 			if(target.bmissile)args[3] = random(28,44);
 			else args[3] = random(32,64);
 		}
-	}
-}
-
-class BackupSynergy play
-{
-	static clearscope bool CheckForItem(Actor other, Name item, int amt = 1)
-	{
-		class<HDWeapon> cls = item;
-		return cls && other && other.CountInv(cls) >= amt;
 	}
 }

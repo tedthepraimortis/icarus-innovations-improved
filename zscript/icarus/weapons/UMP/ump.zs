@@ -375,7 +375,10 @@ class HDUMP : HDWeapon
 						case 2: A_SpawnItemEx('HD45ACPAmmo', cos(pitch * 12), 0, height - 9 - sin(pitch) * 12, 1, 2, 3, 0); break;
 					}
 				}
-
+				A_UpdateChamberFrame();
+			}
+			UMPG A 1 Offset(3, 38)
+			{
 				if (invoker.WeaponStatus[UMProp_Mag] > 0)
 				{
 					invoker.WeaponStatus[UMProp_Chamber] = 2;
@@ -384,7 +387,6 @@ class HDUMP : HDWeapon
 				}
 				A_UpdateChamberFrame();
 			}
-			UMPG A 1 Offset(3, 38);
 			UMPG A 1 Offset(2, 34);
 			UMPG A 1 Offset(0, 32);
 			Goto Nope;
