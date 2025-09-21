@@ -35,7 +35,8 @@ class HDMBR : HDWeapon
 		BRProp_MagType,
 		BRProp_LoadType,
 		BRProp_Zoom,
-		BRProp_DropAdjust
+		BRProp_DropAdjust,
+		BRProp_Grime
 	}
 
 	override void PostBeginPlay()
@@ -539,6 +540,7 @@ class HDMBR : HDWeapon
 		RealFire:
 			#### B 1 Offset(0, 33)
 			{
+				A_Log("Grime: "..Invoker.WeaponStatus[BRProp_Grime]);
 				if (invoker.WeaponStatus[BRProp_Flags] & BRF_Scope) {
 					A_Overlay(PSP_FLASH, 'ScopeFlash');
 				} else {
@@ -549,21 +551,22 @@ class HDMBR : HDWeapon
 				int Chamber = invoker.WeaponStatus[BRProp_Chamber];
 
 				// [Ace] Speed factor and recoil factor. Defaults are for BRFrame_Basic.
-				double SFactor = 1.10;
+				double SFactor = 1.10+(-invoker.WeaponStatus[BRProp_Grime]*(Chamber==BRChamber_Heavy?0.006:0.004));
 				double RFactor = 1.00;
 
 				switch (invoker.WeaponStatus[BRProp_Frame])
 				{
 					case BRFrame_Short:
-						SFactor = 1.00;
+						SFactor = 0.95+(-invoker.WeaponStatus[BRProp_Grime]*(Chamber==BRChamber_Heavy?0.006:0.004));
 						RFactor = 1.30;
 						break;
 					case BRFrame_Bull:
-						SFactor = 1.25;
+						SFactor = 1.25+(-invoker.WeaponStatus[BRProp_Grime]*(Chamber==BRChamber_Heavy?0.006:0.004));
 						RFactor = 0.80;
 						break;
 				}
 
+				A_Log("Speedfactor: "..SFactor);
 				switch (Chamber)
 				{
 					case BRChamber_Light:
@@ -585,6 +588,7 @@ class HDMBR : HDWeapon
 					-frandom(1, 1.2) * RFactor, -frandom(1.5, 2.0) * RFactor
 				);
 				A_Light1();
+				invoker.WeaponStatus[BRProp_Grime] += random(1,3);
 			}
 			#### A 2 Offset(0, 35)
 			{

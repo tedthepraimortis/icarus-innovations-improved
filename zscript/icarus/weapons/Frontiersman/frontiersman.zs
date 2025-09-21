@@ -357,13 +357,13 @@ class HDFrontier : HDWeapon
 				A_Light1();
 				if(invoker.WeaponStatus[FMProp_Mode] == 1 && CountInv("HealingMagic") > 0)
 				{
-					HDBulletActor.FireBullet(self, "HDB_776_Holy");
+					HDBulletActor.FireBullet(self, "HDB_776_Holy", spread: 0.85);
 					A_TakeInventory("HealingMagic", 7);
 					A_StartSound("Weapons/BigRifle2", CHAN_WEAPON, pitch: 0.85);
 				}
 				else
 				{
-					HDBulletActor.FireBullet(self, "HDB_776");
+					HDBulletActor.FireBullet(self, "HDB_776", spread: 1.15, speedfactor: 0.85);
 					A_StartSound("Weapons/BigRifle2", CHAN_WEAPON, pitch: 1.1);
 				}
 				invoker.WeaponStatus[FMProp_Chamber] = 1;
@@ -731,12 +731,12 @@ class HDB_776_Holy : HDBulletActor
 	default
 	{
 		pushfactor 0.1;
-		mass 120;
+		mass 150;
 		speed HDCONST_MPSTODUPT * 1100;
-		accuracy 600;
+		accuracy 666;
 		stamina 776;
-		woundhealth 5;
-		hdbulletactor.hardness 4;
+		woundhealth 3;
+		hdbulletactor.hardness 5;
 		hdbulletactor.distantsound "world/riflefar";
 		hdbulletactor.distantsoundvol 2.;
 	}
@@ -748,7 +748,7 @@ class HDB_776_Holy : HDBulletActor
 		if (hitactor.bSHOOTABLE)
 		{
 			hitactor.damagemobj(self ,target, int(impact) << 2, "holy", DMG_NO_ARMOR);
-			hitactor.A_GiveInventory("Heat", 500);
+			hitactor.A_GiveInventory("Heat", 750);
 		}
 		Super.OnHitActor(hitactor, hitpos, vu, flags);
 	}
