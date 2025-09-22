@@ -4,7 +4,8 @@ class HDFenris : HDCellWeapon
 	{
 		FNF_JustUnload = 1,
 		FNF_PolyFrame = 2,
-		FNF_Platinum = 4
+		FNF_Platinum = 4,
+		FNF_Overheated = 8
 	}
 
 	enum FenrisProperties
@@ -12,7 +13,27 @@ class HDFenris : HDCellWeapon
 		FNProp_Flags,
 		FNProp_Battery,
 		FNProp_Charge,
-		FNProp_Mode
+		FNProp_Mode,
+		FNProp_Heat
+	}
+
+	override void Tick()
+	{
+		if (WeaponStatus[FNProp_Heat] > 0)
+		{
+			if (WeaponStatus[FNProp_Flags] & FNF_Overheated)
+			{
+				WeaponStatus[FNProp_Heat]--;
+			}
+			DrainHeat(FNProp_Heat, 10, 0.5, 1.5, 0.6);
+		}
+		else
+		{
+			WeaponStatus[FNProp_Flags] &= ~FNF_Overheated;
+			WeaponStatus[FNProp_Heat] = 0;
+		}
+
+		Super.Tick();
 	}
 
 	override void PostBeginPlay()
@@ -96,6 +117,11 @@ class HDFenris : HDCellWeapon
 			sb.DrawBattery(-54, -4, sb.DI_SCREEN_CENTER_BOTTOM, reloadorder: true);
 			sb.DrawNum(hpl.CountInv("HDBattery"), -46, -8, sb.DI_SCREEN_CENTER_BOTTOM);
 		}
+
+		if (hdw.WeaponStatus[FNProp_Flags] & FNF_Overheated)
+		{
+			sb.DrawString(sb.pNewSmallFont, "OVERHEAT", (-16, -28), sb.DI_TEXT_ALIGN_RIGHT | sb.DI_SCREEN_CENTER_BOTTOM, Font.CR_RED, scale: (0.5, 0.5));
+		}
 		
 		sb.DrawWepCounter(hdw.WeaponStatus[FNProp_Mode], -15, -15, "STFULAUT", "RBRSA3A7");
 		
@@ -123,6 +149,8 @@ class HDFenris : HDCellWeapon
 		{
 			sb.DrawString(sb.mAmountFont, "00000", (-14, -10), sb.DI_TEXT_ALIGN_RIGHT | sb.DI_TRANSLATABLE | sb.DI_SCREEN_CENTER_BOTTOM, Font.CR_DARKGRAY);
 		}
+		
+		sb.DrawWepNum(hdw.WeaponStatus[FNProp_Heat], A_GetMaxHeat(), posy: -3, alwaysprecise: true);
 	}
 
 	override void DrawSightPicture(HDStatusBar sb, HDWeapon hdw, HDPlayerPawn hpl, bool sightbob, vector2 bob, double fov, bool scopeview, actor hpc, string whichdot)
@@ -141,6 +169,29 @@ class HDFenris : HDCellWeapon
 
 	}
 
+	private action void A_CheckOverheat()
+	{
+		if (invoker.WeaponStatus[FNProp_Heat] > A_GetMaxHeat())
+		{
+			invoker.WeaponStatus[FNProp_Flags] |= FNF_Overheated;
+			invoker.owner.A_StartSound("Greenline/Overload", 10);
+		}
+	}
+
+	private clearscope action int A_GetMaxHeat()
+	{
+		double mult = 1.0;
+		if(invoker.WeaponStatus[FNF_Platinum])
+		{
+			mult += 0.5;
+		}
+		if(invoker.WeaponStatus[FNF_PolyFrame])
+		{
+			mult -= 0.35;
+		}
+		return int(200 * mult);
+	}
+
 	Default
 	{
 		-HDWEAPON.FITSINBACKPACK
@@ -153,7 +204,7 @@ class HDFenris : HDCellWeapon
 		HDWeapon.Refid HDLD_FENRIS;
 		HDWeapon.Loadoutcodes "
 			\cuframe - Lighter Weapon Frame (less bulk)
-			\cuplat - Platinum Wiring (more efficient batteries)";
+			\cuplat - Platinum Wiring (more efficient)";
 	}
 
 	States
@@ -165,7 +216,19 @@ class HDFenris : HDCellWeapon
 			Stop;
 		Ready:
 			FNRS A 0;
-			#### A 1 A_WeaponReady(WRF_ALL);
+			#### A 1
+			{
+				A_WeaponReady(WRF_ALL);
+				if (PressingFire())
+				{
+					if (invoker.WeaponStatus[FNProp_Flags] & FNF_Overheated)
+					{
+						A_StartSound("Greenline/Overheated", CHAN_WEAPON);
+						SetWeaponState('Nope');
+						return;
+					}
+				}
+			}
 			Goto ReadyEnd;
 		Select0:
 			FNRS A 0;
@@ -201,6 +264,9 @@ class HDFenris : HDCellWeapon
 				int Charges = invoker.WeaponStatus[FNProp_Charge];
 				int DamageDealt = random(40, 50);
 				A_FireBullets(0, 0, 0, DamageDealt, "FenrisRayImpact", FBF_NORANDOM | FBF_NORANDOMPUFFZ, HDCONST_ONEMETRE * 300);
+			
+				A_CheckOverheat();
+				invoker.WeaponStatus[FNProp_Heat] += int((DamageDealt / 3) * frandom(0.925, 1.05));
 				A_AlertMonsters();
 				A_MuzzleClimb(-frandom(-0.15, 0.15), -frandom(0.4, 0.5), -frandom(-0.2, 0.2), -frandom(0.5, 0.6));
 				invoker.WeaponStatus[FNProp_Battery]--;
@@ -218,6 +284,9 @@ class HDFenris : HDCellWeapon
 				int Charges = invoker.WeaponStatus[FNProp_Charge];
 				int DamageDealt = random(100, 120);
 				A_FireBullets(0, 0, 0, DamageDealt, "FenrisRayImpact", FBF_NORANDOM | FBF_NORANDOMPUFFZ, HDCONST_ONEMETRE * 300);
+			
+				A_CheckOverheat();
+				invoker.WeaponStatus[FNProp_Heat] += int((DamageDealt / 3) * frandom(0.925, 1.05));
 				A_AlertMonsters();
 				A_MuzzleClimb(-frandom(-0.15, 0.15), -frandom(0.6, 0.8), -frandom(-0.2, 0.2), -frandom(0.8, 1.0));
 				invoker.WeaponStatus[FNProp_Battery] -= 2;
@@ -265,9 +334,11 @@ class HDFenris : HDCellWeapon
 				A_StartSound("Fenris/SBFire", CHAN_WEAPON);
 				int Charges = invoker.WeaponStatus[FNProp_Charge];
 				A_FireProjectile("Snowball", spawnheight: (-10.0 * cos(-pitch)) * player.crouchfactor);
+				invoker.WeaponStatus[FNProp_Heat] -= int((random(100,120) / 3) * frandom(0.925, 1.05));
+				invoker.WeaponStatus[FNProp_Flags] &= ~FNF_Overheated;
 				A_AlertMonsters();
 				A_MuzzleClimb(-frandom(-0.4, 0.4), -frandom(1.5, 1.8), -frandom(-0.6, 0.6), -frandom(1.8, 2.0));
-				invoker.WeaponStatus[FNProp_Battery] -= 12;
+				invoker.WeaponStatus[FNProp_Battery] -= 10;
 			}
 			#### A 1 Offset(0, 42);
 			#### A 1 Offset(0, 36);
