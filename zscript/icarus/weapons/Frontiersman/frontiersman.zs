@@ -379,6 +379,16 @@ class HDFrontier : HDWeapon
 			goto lightdone;
 
 		AltFire:
+			#### A 1;
+			#### D 3
+			{
+				If(GunBraced() && invoker.owner.player.crouchfactor < 1.0)
+				{
+					A_StartSound("Weapons/BoltBack", 8);
+					SetWeaponState("Nope");
+				}
+			}
+			#### # 0 A_StopSound(4);
 		Chamber:
 			FRMG # 0
 			{
