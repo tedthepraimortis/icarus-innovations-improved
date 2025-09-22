@@ -419,7 +419,7 @@ Class HDHEVArmourWorn : HDArmourWorn
 		if(bullet.pitch > 80 && ((hdp && hdp.incapacitated) || (hdmb && hdmb.frame >= hdmb.downedframe && hdmb.instatesequence(hdmb.curstate, hdmb.resolvestate("falldown")))) && !!bullet.target && abs(bullet.target.pos.z - bullet.pos.z) < bullet.target.Height)
 		return pen, penshell;
 		double hitHeight = hitactoristall ? ((hitpos.z - hitactor.pos.z) / hitactor.Height) : 0.5;
-		double addpenshell = 15+max(0,((durability-90)>>3));
+		double addpenshell = 9+max(0,((durability-90)>>1));
 		int crackseed = int(level.time + Angle) & (1 | 2 | 4 | 8 | 16 | 32);
 		if(hitHeight>0.8)
 		{
