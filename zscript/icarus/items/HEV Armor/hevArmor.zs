@@ -201,12 +201,12 @@ Class HDHEVArmourWorn : HDArmourWorn
 
 	Override double RestrictSpeed(double speedcap)
 	{
-		return min(speedcap, 2.5);
+		return min(speedcap, 1.5);
 	}
 
 	Override double GetBulk()
 	{
-		return ENC_HEVARMOUR * 0.13;
+		return ENC_HEVARMOUR * 0.19;
 	}
 
 	Override Void DrawHudStuff(hdstatusbar sb, hdPlayerpawn hpl, int hdflags, int gzflags)
@@ -419,7 +419,7 @@ Class HDHEVArmourWorn : HDArmourWorn
 		if(bullet.pitch > 80 && ((hdp && hdp.incapacitated) || (hdmb && hdmb.frame >= hdmb.downedframe && hdmb.instatesequence(hdmb.curstate, hdmb.resolvestate("falldown")))) && !!bullet.target && abs(bullet.target.pos.z - bullet.pos.z) < bullet.target.Height)
 		return pen, penshell;
 		double hitHeight = hitactoristall ? ((hitpos.z - hitactor.pos.z) / hitactor.Height) : 0.5;
-		double addpenshell = 21;
+		double addpenshell = 15+max(0,((durability-90)>>3));
 		int crackseed = int(level.time + Angle) & (1 | 2 | 4 | 8 | 16 | 32);
 		if(hitHeight>0.8)
 		{
