@@ -284,7 +284,7 @@ class GFBBlastImpact : HDActor
 		+FORCERADIUSDMG
 		+NOBLOOD
 		Decal "GFBScorch";
-		damagetype "Bashing";
+		damagetype "Electrical";
 	}
 
 	States
@@ -292,9 +292,8 @@ class GFBBlastImpact : HDActor
 		Spawn:
 			TNT1 A 1 NoDelay
 			{
-				//int BlastDamage = random(1,2);
-				//A_HDBlast(42, BlastDamage, 21, "Electrical", 0, 0, 0, false, 0, "None", 0, 0, 0, true, null, false, 180);
-				A_Explode(frandom(15,45),6,XF_HURTSOURCE,1,8);
+				A_HDBlast(HDCONST_ONEMETRE * 1, random(24,32), HDCONST_ONEMETRE * 1, "Electrical");
+				//A_Explode(frandom(15,45),6,XF_HURTSOURCE,1,8);
 					
 					/*
 					A_HDBlast(blastradius:8, blastdamage:random(1,4), fullblastradius:5, blastdamagetype:"Electrical", pushradius:0, pushamount:0, fragradius:HDCONST_ONEMETRE*1, fragtype:"HDB_frag", 

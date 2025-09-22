@@ -1,0 +1,13 @@
+
+decal GFBScorch
+{
+    pic FNRSCR1
+    shade "44 D6 1D"
+    x-scale 0.05
+    y-scale 0.05
+    randomflipx
+    randomflipy
+    Fullbright
+    animator GoAway
+    LowerDecal "GFBScorchBlack"
+}

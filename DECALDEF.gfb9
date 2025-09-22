@@ -11,7 +11,7 @@ decal GFBScorchBlack
 decal GFBScorch
 {
 	pic FNRSCR1
-	shade "44 D6 1D"
+	shade "00 84 FF"
 	x-scale 0.05
 	y-scale 0.05
 	randomflipx
