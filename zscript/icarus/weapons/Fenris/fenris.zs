@@ -25,6 +25,10 @@ class HDFenris : HDCellWeapon
 			{
 				WeaponStatus[FNProp_Heat]--;
 			}
+			if (WeaponStatus[FNProp_Battery] == -1)
+			{
+				WeaponStatus[FNProp_Heat]--;
+			}
 			DrainHeat(FNProp_Heat, 10, 0.5, 1.5, 0.6);
 		}
 		else
