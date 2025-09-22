@@ -31,6 +31,23 @@ Class HDHEVArmour : HDArmour
 		}
 	}
 
+	void WearArmourHelpText(actor wearer,double durability,bool mega){
+		if(!HDWeapon.CheckDoHelpText(wearer))return;
+		string opinion="";
+		double qual=double(durability)/(HDCONST_HEVARMOUR);
+		if(qual<0.1)opinion="$DURABILITY_1";
+		else if(qual<0.3)opinion="$DURABILITY_3";
+		else if(qual<0.6)opinion="$DURABILITY_6";
+		else if(qual<0.75)opinion="$DURABILITY_75";
+		else if(qual<0.95)opinion="$DURABILITY_95";
+		wearer.A_Log(
+			Stringtable.Localize("$ARMOUR_PUTON")
+			..Stringtable.Localize("$TAG_HEVARMOUR")
+			..Stringtable.Localize("$HD_SENTENCEBREAK")
+			..Stringtable.Localize(opinion)
+		,true);
+	}
+
 	action Void A_WearArmour()
 	{
 		bool HelpText = (!!Player && CVar.GetCvar("hd_HelpText", Player).GetBool());
@@ -67,17 +84,8 @@ Class HDHEVArmour : HDArmour
 		worn.Durability = dbl;
 		Invoker.Amount--;
 		Invoker.Mags.pop();
-		if (HelpText)
-		{
-			string blah = string.Format("You put on the Hazardous Environment Armor. ");
-			double qual = double(worn.Durability) / HDCONST_HEVARMOUR;
-			if (qual < 0.2) A_Log(blah.."Just don't get hit.", true);
-			else if (qual < 0.3) A_Log(blah.."You cover your shameful nakedness with your filthy rags.", true);
-			else if (qual < 0.5) A_Log(blah.."It's better than nothing.", true);
-			else if (qual < 0.7) A_Log(blah.."This armour has definitely seen better days.", true);
-			else if (qual < 0.9) A_Log(blah.."This armour does not pass certification.", true);
-			else A_Log(blah, true);
-		}
+
+		Invoker.WearArmourHelpText(self,dbl,worn.mega);
 
 		Invoker.SyncAmount();
 	}
