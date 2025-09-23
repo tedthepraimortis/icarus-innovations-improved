@@ -217,12 +217,6 @@ class HDGFBlaster : HDHandgun
 					SetWeaponState("EndCharge");
 				}
 
-				if (++invoker.WeaponStatus[GBProp_Timer] > 3 - (Synergy.CheckForItem(self, "HDFenris") ? 1 : 0))
-				{
-					invoker.WeaponStatus[GBProp_Timer] = 0;
-					invoker.WeaponStatus[GBProp_Charge]++;
-				}
-
 				A_WeaponBusy(false);
 				A_StartSound("GFBlaster/Charge", 8);
 				BFG9k.Spark(self, 1, height - 10);
@@ -292,7 +286,7 @@ class GFBBlastImpact : HDActor
 		Spawn:
 			TNT1 A 1 NoDelay
 			{
-				A_HDBlast(HDCONST_ONEMETRE * 1, random(24,32), HDCONST_ONEMETRE * 1, "Electrical");
+				A_HDBlast(HDCONST_ONEMETRE * 1, random(24,32), HDCONST_ONEMETRE * 1, "Electrical", immolateradius:HDCONST_ONEMETRE * 1, immolateamount:random(4,9), immolatechance:100);
 				//A_Explode(frandom(15,45),6,XF_HURTSOURCE,1,8);
 					
 					/*
@@ -310,14 +304,5 @@ class GFBBlastImpact : HDActor
 				}
 			}
 			Stop;
-	}
-}
-
-class Synergy play
-{
-	static clearscope bool CheckForItem(Actor other, Name item, int amt = 1)
-	{
-		class<HDWeapon> cls = item;
-		return cls && other && other.CountInv(cls) >= amt;
 	}
 }
