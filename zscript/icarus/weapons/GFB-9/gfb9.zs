@@ -216,6 +216,12 @@ class HDGFBlaster : HDHandgun
 				{
 					SetWeaponState("EndCharge");
 				}
+				
+				if (++invoker.WeaponStatus[GBProp_Timer] > 3)
+				{
+					invoker.WeaponStatus[GBProp_Timer] = 0;
+					invoker.WeaponStatus[GBProp_Charge]++;
+				}
 
 				A_WeaponBusy(false);
 				A_StartSound("GFBlaster/Charge", 8);
