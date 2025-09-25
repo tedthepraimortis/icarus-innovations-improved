@@ -1,4 +1,4 @@
-class HDMBR : HDWeapon
+class HDMBR : WAN_20mmLauncher
 {
 	enum MBRFrames
 	{
@@ -69,7 +69,7 @@ class HDMBR : HDWeapon
 		{
 			WeaponStatus[BRProp_Flags] &= ~BRF_GrenadeLoaded;
 			Actor ptr = owner ? owner : Actor(self);
-			ptr.A_SpawnItemEx('HDRocketAmmo', cos(ptr.pitch) * 10, 0, ptr.height - 10 - 10 * sin(ptr.pitch), ptr.vel.x, ptr.vel.y, ptr.vel.z, 0, SXF_ABSOLUTEMOMENTUM | SXF_NOCHECKPOSITION | SXF_TRANSFERPITCH);
+			ptr.A_SpawnItemEx('WAN_20mmGrenadeAmmo', cos(ptr.pitch) * 10, 0, ptr.height - 10 - 10 * sin(ptr.pitch), ptr.vel.x, ptr.vel.y, ptr.vel.z, 0, SXF_ABSOLUTEMOMENTUM | SXF_NOCHECKPOSITION | SXF_TRANSFERPITCH);
 			ptr.A_StartSound("MBR/GrenadeOpen", CHAN_WEAPON);
 		}
 	}
@@ -154,11 +154,11 @@ class HDMBR : HDWeapon
 		{
 			WeaponStatus[BRProp_Flags] |= BRF_Scope;
 		}
-		if (GetLoadoutVar(input, "select", 1) > 0)
+		if (GetLoadoutVar(input, "select", 1) > 0 && GetLoadoutVar(input, "dmr", 1) < 1)
 		{
 			WeaponStatus[BRProp_Flags] |= BRF_FireSelector;
 		}
-		if (GetLoadoutVar(input, "gl", 1) > 0)
+		if (GetLoadoutVar(input, "gl", 1) > 0 && GetLoadoutVar(input, "cqc", 1) < 1)
 		{
 			WeaponStatus[BRProp_Flags] |= BRF_GL;
 		}
@@ -296,8 +296,8 @@ class HDMBR : HDWeapon
 
 			if (hdw.WeaponStatus[BRProp_Flags] & BRF_GL)
 			{
-				sb.DrawImage("ROQPA0",(-50, -4), sb.DI_SCREEN_CENTER_BOTTOM, scale: (0.6, 0.6));
-				sb.DrawNum(hpl.CountInv('HDRocketAmmo'), -48, -8, sb.DI_SCREEN_CENTER_BOTTOM);
+				sb.DrawImage("MA7GB0",(-50, -4), sb.DI_SCREEN_CENTER_BOTTOM, scale: (1, 1));
+				sb.DrawNum(hpl.CountInv('WAN_20mmGrenadeAmmo'), -48, -8, sb.DI_SCREEN_CENTER_BOTTOM);
 			}
 		}
 
@@ -421,9 +421,9 @@ class HDMBR : HDWeapon
 				owner.angle += 15;
 			}
 
-			if (owner.CheckInventory('HDRocketAmmo', 1))
+			if (owner.CheckInventory('WAN_20mmGrenadeAmmo', 1))
 			{
-				owner.A_DropInventory('HDRocketAmmo', 1);
+				owner.A_DropInventory('WAN_20mmGrenadeAmmo', 1);
 			}
 
 			owner.angle = OldAngle;
@@ -445,8 +445,8 @@ class HDMBR : HDWeapon
 		HDWeapon.Refid "mbr";
 		HDWeapon.Loadoutcodes "
 			\cuheavy - Loaded with Heavy Mags
-			\cucqc - CQC Barrel
-			\cudmr - DMR Barrel
+			\cucqc - CQC Barrel, incompatible with grenade launchers
+			\cudmr - DMR Barrel, incompatible with fire-selector
 			\cuscope - Scope
 			\cuselect - Select Fire Switch
 			\cugl - Grenade Launcher";
@@ -511,7 +511,7 @@ class HDMBR : HDWeapon
 			#### A 0 A_JumpIf(!(invoker.WeaponStatus[BRProp_Flags] & BRF_GrenadeLoaded), 'Nope');
 			#### A 2
 			{
-				A_FireHDGL();
+				A_Fire20mmGL();
 				invoker.WeaponStatus[BRProp_Flags] &= ~BRF_GrenadeLoaded;
 				A_StartSound("weapons/grenadeshot", CHAN_WEAPON);
 				A_ZoomRecoil(0.95);
@@ -671,7 +671,7 @@ class HDMBR : HDWeapon
 			#### A 0
 			{
 				invoker.WeaponStatus[BRProp_Flags] &= ~BRF_JustUnload;
-				if (invoker.WeaponStatus[BRProp_Flags] & BRF_GL && !(invoker.WeaponStatus[BRProp_Flags] & BRF_GrenadeLoaded) && CheckInventory("HDRocketAmmo", 1))
+				if (invoker.WeaponStatus[BRProp_Flags] & BRF_GL && !(invoker.WeaponStatus[BRProp_Flags] & BRF_GrenadeLoaded) && CheckInventory("WAN_20mmGrenadeAmmo", 1))
 				{
 					SetWeaponState('UnloadGL');
 				}
@@ -706,15 +706,15 @@ class HDMBR : HDWeapon
 					return;
 				}
 				invoker.WeaponStatus[BRProp_Flags] &= ~BRF_GrenadeLoaded;
-				if(!PressingUnload() || A_JumpIfInventory('HDRocketAmmo', 0, 'Null'))
+				if(!PressingUnload() || A_JumpIfInventory('WAN_20mmGrenadeAmmo', 0, 'Null'))
 				{
-					A_SpawnItemEx('HDRocketAmmo', cos(pitch) * 10, 0, height - 10 - 10 * sin(pitch), vel.x, vel.y, vel.z, 0, SXF_ABSOLUTEMOMENTUM | SXF_NOCHECKPOSITION | SXF_TRANSFERPITCH);
+					A_SpawnItemEx('WAN_20mmGrenadeAmmo', cos(pitch) * 10, 0, height - 10 - 10 * sin(pitch), vel.x, vel.y, vel.z, 0, SXF_ABSOLUTEMOMENTUM | SXF_NOCHECKPOSITION | SXF_TRANSFERPITCH);
 				}
 				else
 				{
 					A_SetTics(20);
 					A_StartSound("weapons/pocket", CHAN_WEAPON, CHANF_OVERLAP);
-					A_GiveInventory('HDRocketAmmo', 1);
+					A_GiveInventory('WAN_20mmGrenadeAmmo', 1);
 					A_MuzzleClimb(frandom(0.8, -0.2), frandom(0.4, -0.2));
 				}
 			}
@@ -724,7 +724,7 @@ class HDMBR : HDWeapon
 			#### AAA 5 Offset(10, 50) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
 			#### A 15 Offset(8, 50)
 			{
-				A_TakeInventory('HDRocketAmmo', 1, TIF_NOTAKEINFINITE);
+				A_TakeInventory('WAN_20mmGrenadeAmmo', 1, TIF_NOTAKEINFINITE);
 				invoker.WeaponStatus[BRProp_Flags] |= BRF_GrenadeLoaded;
 				A_StartSound("MBR/GrenadeLoad", CHAN_WEAPON);
 			}
@@ -916,7 +916,7 @@ class MBRRandom : IdleDummy
 
 				wpn.WeaponStatus[wpn.BRProp_Frame] = random(wpn.BRFrame_Basic, wpn.BRFrame_Bull);
 
-				if (!random(0, 2))
+				if (!random(0, 2) && wpn.WeaponStatus[wpn.BRProp_Frame] != wpn.BRFrame_Bull)
 				{
 					wpn.WeaponStatus[wpn.BRProp_Flags] |= wpn.BRF_FireSelector;
 				}
@@ -924,7 +924,7 @@ class MBRRandom : IdleDummy
 				{
 					wpn.WeaponStatus[wpn.BRProp_Flags] |= wpn.BRF_Scope;
 				}
-				if (!random(0, 2))
+				if (!random(0, 2) && wpn.WeaponStatus[wpn.BRProp_Frame] != wpn.BRFrame_Short)
 				{
 					wpn.WeaponStatus[wpn.BRProp_Flags] |= wpn.BRF_GL;
 				}
