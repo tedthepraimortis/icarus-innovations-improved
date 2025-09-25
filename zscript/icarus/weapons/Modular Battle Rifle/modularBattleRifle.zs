@@ -540,7 +540,6 @@ class HDMBR : HDWeapon
 		RealFire:
 			#### B 1 Offset(0, 33)
 			{
-				A_Log("Grime: "..Invoker.WeaponStatus[BRProp_Grime]);
 				if (invoker.WeaponStatus[BRProp_Flags] & BRF_Scope) {
 					A_Overlay(PSP_FLASH, 'ScopeFlash');
 				} else {
@@ -566,7 +565,6 @@ class HDMBR : HDWeapon
 						break;
 				}
 
-				A_Log("Speedfactor: "..SFactor);
 				switch (Chamber)
 				{
 					case BRChamber_Light:
