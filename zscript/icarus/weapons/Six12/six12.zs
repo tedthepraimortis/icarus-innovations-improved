@@ -11,7 +11,8 @@ class HDSix12 : HDWeapon
 		STProp_Mag,
 		STProp_MagType,
 		STProp_LoadType,
-		STProp_SpentShells
+		STProp_SpentShells,
+		STProp_Cocked
 	}
 
 	override void PostBeginPlay()
@@ -214,7 +215,7 @@ class HDSix12 : HDWeapon
 			STLG A 0
 			{
 				int Mag = invoker.WeaponStatus[STProp_Mag];
-				if (Mag > 0)
+				if (Mag > 0 && invoker.weaponstatus[STProp_Cocked]==1)
 				{
 					SetWeaponState("RealFire");
 					return;
@@ -238,6 +239,7 @@ class HDSix12 : HDWeapon
 				}
 				invoker.WeaponStatus[STProp_SpentShells]++;
 				invoker.WeaponStatus[STProp_Mag]--;
+				invoker.WeaponStatus[STProp_Cocked]=0;
 				A_AlertMonsters();
 				A_StartSound("Six12/Fire", CHAN_WEAPON, pitch: (MType == 0 ? 0.9 : 1.0));
 				A_ZoomRecoil(0.995);
@@ -267,6 +269,23 @@ class HDSix12 : HDWeapon
 			STLG A 1;
 			STLG A 0 A_Refire();
 			Goto Ready;
+		
+		Altfire:
+			---- A 0 A_JumpIf(invoker.WeaponStatus[STProp_Cocked]==1,"uncock");
+			#### A 1 offset(0,34);
+			#### A 2 offset(0,36);
+		
+		Cocked:
+			#### C 0 {invoker.WeaponStatus[STProp_Cocked]=1;}
+			---- A 0 A_JumpIf(pressingaltfire(),"nope");
+		goto readyend;
+
+		Uncock:
+			#### A 1 offset(0,38);
+			#### A 1 offset(0,34);
+			#### A 2 offset(0,36) A_StartSound("weapons/deinocyl",8,CHANF_OVERLAP);
+			#### A 0 {invoker.WeaponStatus[STProp_Cocked]=0;}
+		goto nope;
 			
 		Unload:
 			STLG A 0
