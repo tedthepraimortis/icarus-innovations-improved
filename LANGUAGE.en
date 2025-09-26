@@ -326,7 +326,6 @@ PD42_HELPTEXT_4 = " Reload mag\n";
 PD42_HELPTEXT_5 = " Semi Auto/Double Tap/Full Auto\n";
 
 // Six-12
-SIX12_HELPTEXT_1 = " Fire Weapon\n";
 SIX12_HELPTEXT_2 = " Load Shell Magazine\n";
 SIX12_HELPTEXT_3 = " Load Slug Magazine\n";
 SIX12_HELPTEXT_4 = " Unload loaded Magazine\n";

@@ -12,7 +12,8 @@ class HDSix12 : HDWeapon
 		STProp_MagType,
 		STProp_LoadType,
 		STProp_SpentShells,
-		STProp_Cocked
+		STProp_Cocked,
+		STProp_Choke
 	}
 
 	override void PostBeginPlay()
@@ -58,6 +59,12 @@ class HDSix12 : HDWeapon
 			WeaponStatus[STProp_MagType] = 1;
 		}
 
+		int Choke = min(GetLoadoutVar(input, "choke" , 1), 5);
+		if (Choke >= 0)
+		{
+			WeaponStatus[STProp_Choke] = Choke;
+		}
+
 		InitializeWepStats(false);
 	}
 	override void InitializeWepStats(bool idfa)
@@ -69,7 +76,7 @@ class HDSix12 : HDWeapon
 	{
 		LocalizeHelp();
 		return 
-		LWPHELP_FIRE.. Stringtable.Localize("$SIX12_HELPTEXT_1")
+		LWPHELP_FIRE.. Stringtable.Localize("$SHOOT_CH")..WeaponStatus[STProp_Choke]..")\n"
 		..LWPHELP_RELOAD..Stringtable.Localize("$SIX12_HELPTEXT_2")
 		..LWPHELP_ALTRELOAD..Stringtable.Localize("$SIX12_HELPTEXT_3")
 		..LWPHELP_UNLOAD.. Stringtable.Localize("$SIX12_HELPTEXT_4")
@@ -172,7 +179,8 @@ class HDSix12 : HDWeapon
 		HDWeapon.Refid HDLD_SIX12;
 		Inventory.PickupMessage "$PICKUP_SIX12";
 		HDWeapon.Loadoutcodes "
-			\cuslugs - Loaded with Slug Mag";
+			\cuslugs - Loaded with Slug Mag
+			\cuchoke - 0-5, 0 skeet, 5 full";
 	}
 
 	States
@@ -231,12 +239,13 @@ class HDSix12 : HDWeapon
 				int MType = invoker.WeaponStatus[STProp_MagType];
 				if (MType == 0)
 				{
-					Hunter.Fire(self, 7);
+					Hunter.Fire(self, invoker.WeaponStatus[STProp_Choke]);
 				}
 				else
 				{
-					HDBulletActor.FireBullet(self, "HDB_SLUG", speedfactor: 1.15);
+					HDBulletActor.FireBullet(self, "HDB_SLUG", speedfactor: 1.15 - (0.1 * invoker.WeaponStatus[STProp_Choke]));
 				}
+				A_Log("Shit"..(1.15 - (0.1 * invoker.WeaponStatus[STProp_Choke])));
 				invoker.WeaponStatus[STProp_SpentShells]++;
 				invoker.WeaponStatus[STProp_Mag]--;
 				invoker.WeaponStatus[STProp_Cocked]=0;
@@ -276,7 +285,7 @@ class HDSix12 : HDWeapon
 			#### A 2 offset(0,36);
 		
 		Cocked:
-			#### C 0 {invoker.WeaponStatus[STProp_Cocked]=1;}
+			#### A 0 {invoker.WeaponStatus[STProp_Cocked]=1;}
 			---- A 0 A_JumpIf(pressingaltfire(),"nope");
 		goto readyend;
 
