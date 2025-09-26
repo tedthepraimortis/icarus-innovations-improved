@@ -228,6 +228,7 @@ class HDSix12 : HDWeapon
 					SetWeaponState("RealFire");
 					return;
 				}
+				else A_StartSound("Six12/Click", CHAN_WEAPON);
 			}
 			Goto Nope;
 		RealFire:
@@ -245,7 +246,6 @@ class HDSix12 : HDWeapon
 				{
 					HDBulletActor.FireBullet(self, "HDB_SLUG", speedfactor: 1.15 - (0.1 * invoker.WeaponStatus[STProp_Choke]));
 				}
-				A_Log("Shit"..(1.15 - (0.1 * invoker.WeaponStatus[STProp_Choke])));
 				invoker.WeaponStatus[STProp_SpentShells]++;
 				invoker.WeaponStatus[STProp_Mag]--;
 				invoker.WeaponStatus[STProp_Cocked]=0;
@@ -292,7 +292,7 @@ class HDSix12 : HDWeapon
 		Uncock:
 			#### A 1 offset(0,38);
 			#### A 1 offset(0,34);
-			#### A 2 offset(0,36) A_StartSound("weapons/deinocyl",8,CHANF_OVERLAP);
+			#### A 2 offset(0,36) A_StartSound("Six12/Cyl",8,CHANF_OVERLAP);
 			#### A 0 {invoker.WeaponStatus[STProp_Cocked]=0;}
 		goto nope;
 			
