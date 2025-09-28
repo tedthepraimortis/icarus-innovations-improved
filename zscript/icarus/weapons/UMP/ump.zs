@@ -12,8 +12,8 @@ class HDB_45ACPTesla : HDBulletActor
 		PushFactor 0.6;
 		// Read above comment. - [Ted]
 		WoundHealth 2;
-		// Same as .45 ACP. - [Ted]
-		Speed HDCONST_MPSTODUPT * 400;
+		// Slower than .45 ACP. Cause damage. - [Ted]
+		Speed HDCONST_MPSTODUPT * 290;
 	}
 
 	override void HitGeometry( line hitline, sector hitsector, int hitside, int hitpart, vector3 vu, double lastdist)
@@ -28,6 +28,11 @@ class HDB_45ACPTesla : HDBulletActor
 	{
 		lingeringthunder.zap(hitactor,hitactor,hitactor,20);
 		hdmobbase.forcepain(hitactor);
+		if( hitactor.bshootable && hitactor.mass){
+			hitactor.vel.x+=30.*random(20,25)/hitactor.mass;
+			hitactor.vel.y+=30.*random(20,25)/hitactor.mass;
+			hitactor.vel.z+=30.*random(20,25)/hitactor.mass;
+		}
 
 		Super.OnHitActor(hitactor, hitpos, vu, flags);
 	}
