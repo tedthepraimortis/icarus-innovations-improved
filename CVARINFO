@@ -1,6 +1,8 @@
 // Most of these are server variables so in a multiplayer session they can be synced to other players.
 // Every weapon has a comment before its cvars based on its name in-game for organization. - [Ted]
 
+server int debug_int = 0;
+
 server bool Flamer_PrettyLights = false;
 
 // --------------------

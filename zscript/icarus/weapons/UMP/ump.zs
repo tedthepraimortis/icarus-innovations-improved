@@ -1,3 +1,38 @@
+class HDB_45ACPTesla : HDBulletActor
+{
+	Default
+	{
+		// Originally 110. Significantly less because of the shocky-bits. - [Ted]
+		Mass 80;
+		// Rounder than base .45 - [Ted]
+		Accuracy 200;
+		// Less hard, "pure" lead instead of a lead cast. - [Ted]
+		HDBulletActor.Hardness 1;
+		// Still no idea what this does. - [Ted]
+		PushFactor 0.6;
+		// Read above comment. - [Ted]
+		WoundHealth 2;
+		// Same as .45 ACP. - [Ted]
+		Speed HDCONST_MPSTODUPT * 400;
+	}
+
+	override void HitGeometry( line hitline, sector hitsector, int hitside, int hitpart, vector3 vu, double lastdist)
+	{
+		// Too much ouch. - [Ted]
+		//A_SpawnItemEx("lingeringthunder");
+
+		Super.HitGeometry(hitline, hitsector, hitside, hitpart, vu, lastdist);
+	}
+
+	override void OnHitActor(actor hitactor, vector3 hitpos, vector3 vu, int flags)
+	{
+		lingeringthunder.zap(hitactor,hitactor,hitactor,20);
+		hdmobbase.forcepain(hitactor);
+
+		Super.OnHitActor(hitactor, hitpos, vu, flags);
+	}
+}
+
 class HDUMP : HDWeapon
 {
 	const UMP45ACP_LOADED = 0.85;
@@ -200,10 +235,10 @@ class HDUMP : HDWeapon
 
 				A_Light1();
 				A_StartSound("UMP/Fire", CHAN_WEAPON);
-				HDBulletActor.FireBullet(self, "HDB_45ACP", spread: 1.0, speedfactor: 1.1);
-				A_AlertMonsters();
+				HDBulletActor.FireBullet(self, "HDB_45ACPTesla", spread: 3);
+				A_AlertMonsters(HDCONST_ONEMETRE * 25);
 				A_ZoomRecoil(1.05);
-				A_MuzzleClimb(-frandom(-0.5, 0.5), -frandom(0.5, 0.6), -frandom(-0.5, 0.5), -frandom(0.5, 0.6));
+				A_MuzzleClimb(-frandom(-0.65, 0.75), -frandom(0.666, 0.96), -frandom(-0.55, 0.75), -frandom(0.75, 0.96));
 				invoker.WeaponStatus[UMProp_Chamber] = 1;
 			}
 			UMPG A 1
