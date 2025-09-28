@@ -29,8 +29,8 @@ class HDB_45ACPTesla : HDBulletActor
 		lingeringthunder.zap(hitactor,hitactor,hitactor,20);
 		hdmobbase.forcepain(hitactor);
 		if( hitactor.bshootable && hitactor.mass){
-			hitactor.vel.x+=30.*random(20,25)/hitactor.mass;
-			hitactor.vel.y+=30.*random(20,25)/hitactor.mass;
+			hitactor.vel.x+=(30.*random(20,25)/hitactor.mass)*randompick(1,-1);
+			hitactor.vel.y+=(30.*random(20,25)/hitactor.mass)*randompick(1,-1);
 			hitactor.vel.z+=30.*random(20,25)/hitactor.mass;
 		}
 
