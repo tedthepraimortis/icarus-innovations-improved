@@ -1,10 +1,21 @@
 // Why yes I'm stupid and couldn't get inheritence to work well, how can you tell? - [Ted]
+class TeslaFlashLight:BeamSpotFlashLight{
+	override void postbeginplay(){
+		super.postbeginplay();
+		args[0]=128;
+		args[1]=96;
+		args[2]=224;
+		args[3]=24;
+		args[4]=0;
+	}
+}
+
 class TeslaThunder : IdleDummy
 {
 	int startingstamina;
 	default
 	{
-		stamina 16;
+		stamina 20;
 	}
 	override void postbeginplay(){
 		super.postbeginplay();
@@ -64,8 +75,8 @@ class TeslaThunder : IdleDummy
 			}
 		}
 
-		int zappower=random(baseamount>>5,baseamount>>2);
-		actor bsfl=spawn("BeamSpotFlashLight",victim.pos,ALLOW_REPLACE);
+		int zappower=random(baseamount>>25,baseamount>>10);
+		actor bsfl=spawn("TeslaFlashLight",victim.pos,ALLOW_REPLACE);
 		bsfl.target=victim;
 
 		//make bodies spasm
@@ -78,7 +89,7 @@ class TeslaThunder : IdleDummy
 
 		if(!nodmg){
 			victim.damagemobj(inflictor,source,zappower,"electrical",source&&source.player?DMG_PLAYERATTACK:0);
-			if(hdmobbase(victim))hdmobbase(victim).stunned+=(zappower>>3);
+			if(hdmobbase(victim))hdmobbase(victim).stunned+=random(3,9);
 		}
 		return zappower;
 	}
@@ -120,9 +131,9 @@ class HDB_45ACPTesla : HDBulletActor
 		lingeringthunder.zap(hitactor,hitactor,hitactor,20);
 		hdmobbase.forcepain(hitactor);
 		if(hitactor.bshootable && hitactor.mass){
-			hitactor.vel.x+=(30.*random(20,25)/hitactor.mass)*randompick(1,-1);
-			hitactor.vel.y+=(30.*random(20,25)/hitactor.mass)*randompick(1,-1);
-			hitactor.vel.z+=30.*random(20,25)/hitactor.mass;
+			hitactor.vel.x+=(3.*random(20,25)/hitactor.mass)*randompick(1,-1);
+			hitactor.vel.y+=(3.*random(20,25)/hitactor.mass)*randompick(1,-1);
+			hitactor.vel.z+=3.*random(20,25)/hitactor.mass;
 		}
 
 		Super.OnHitActor(hitactor, hitpos, vu, flags);
@@ -325,7 +336,7 @@ class HDUMP : HDWeapon
 			}
 			Goto Nope;
 		Shoot:
-			UMPG B 2
+			UMPG B 3
 			{
 				A_Overlay(PSP_FLASH, 'Flash');
 
