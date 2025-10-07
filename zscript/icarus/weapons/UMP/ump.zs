@@ -1,3 +1,94 @@
+// Why yes I'm stupid and couldn't get inheritence to work well, how can you tell? - [Ted]
+class TeslaThunder : IdleDummy
+{
+	int startingstamina;
+	default
+	{
+		stamina 16;
+	}
+	override void postbeginplay(){
+		super.postbeginplay();
+		startingstamina=stamina;
+	}
+	void A_Zap(){
+		if(stamina<1){destroy();return;}
+		stamina-=5;
+		blockthingsiterator zit=blockthingsiterator.create(self,96+(stamina>>2));
+		int icount=0;
+		bool haszapped=false;
+		while(zit.next()){
+			actor zt=zit.thing;
+			if(
+				!zt
+				||(!zt.bshootable&&!zt.bsolid)
+				||abs(zt.pos.z-pos.z)>96
+				||zt.floorz+(stamina>>2)<zt.pos.z
+				||!random(0,3)
+				||!checksight(zt)
+			)continue;
+			haszapped=true;
+			int zappower=Zap(zt,self,target,stamina);
+			stamina-=max(2,zappower>>3);
+		}
+		if(!haszapped){
+			double oldrad=radius;
+			a_setsize(stamina,height);
+			Zap(self,self,target,stamina,true);
+			a_setsize(oldrad,height);
+		}
+		A_SetTics(max(1,min(random(4,24),int(sqrt(startingstamina-stamina)))));
+	}
+	static int Zap(actor victim,actor inflictor,actor source,int baseamount,bool nodmg=false){
+		//create arc
+		double ztr=victim.radius;
+		vector3 nodes[4];
+		int len=min(35,baseamount);
+		nodes[0]=victim.pos+(frandom(-ztr,ztr),frandom(-ztr,ztr),frandom(0,victim.height));
+		nodes[1]=nodes[0]+(frandom(-len,len),frandom(-len,len),frandom(-len,len));
+		nodes[2]=nodes[1]+(frandom(-len,len),frandom(-len,len),frandom(-(len>>1),len));
+		nodes[3]=nodes[2]+(frandom(-len,len),frandom(-len,len),frandom(-len*2/3,(len>>1)));
+		for(int i=1;i<4;i++){
+			vector3 pastnode=nodes[i-1];
+			vector3 particlepos=nodes[i]-pastnode;
+			int iterations=int(particlepos.length());
+			vector3 particlemove=particlepos/iterations;
+			particlepos=pastnode-victim.pos;
+			for(int i=0;i<iterations;i++){
+				victim.A_SpawnParticle("white",
+					SPF_RELATIVE|SPF_FULLBRIGHT,(len>>1),frandom(1,7),0,
+					particlepos.x,particlepos.y,particlepos.z,
+					frandom(-0.1,0.1),frandom(-0.1,0.1),frandom(0.1,0.2),
+					frandom(-0.1,0.1),frandom(-0.1,0.1),-0.05
+				);
+				particlepos+=particlemove+(frandom(-1,1),frandom(-1,1),frandom(-1,1));
+			}
+		}
+
+		int zappower=random(baseamount>>5,baseamount>>2);
+		actor bsfl=spawn("BeamSpotFlashLight",victim.pos,ALLOW_REPLACE);
+		bsfl.target=victim;
+
+		//make bodies spasm
+		if(
+			victim.bshootable
+			&&victim.mass
+		){
+			victim.vel.z+=3.*zappower/victim.mass;
+		}
+
+		if(!nodmg){
+			victim.damagemobj(inflictor,source,zappower,"electrical",source&&source.player?DMG_PLAYERATTACK:0);
+			if(hdmobbase(victim))hdmobbase(victim).stunned+=(zappower>>3);
+		}
+		return zappower;
+	}
+	states{
+	spawn:
+		TNT1 A 1 A_Zap();
+		wait;
+	}
+}
+
 class HDB_45ACPTesla : HDBulletActor
 {
 	Default
@@ -16,10 +107,10 @@ class HDB_45ACPTesla : HDBulletActor
 		Speed HDCONST_MPSTODUPT * 290;
 	}
 
-	override void HitGeometry( line hitline, sector hitsector, int hitside, int hitpart, vector3 vu, double lastdist)
+	override void HitGeometry(line hitline, sector hitsector, int hitside, int hitpart, vector3 vu, double lastdist)
 	{
-		// Too much ouch. - [Ted]
-		//A_SpawnItemEx("lingeringthunder");
+		// Just enough ouch now. I hope. - [Ted]
+		A_SpawnItemEx("TeslaThunder");
 
 		Super.HitGeometry(hitline, hitsector, hitside, hitpart, vu, lastdist);
 	}
@@ -28,7 +119,7 @@ class HDB_45ACPTesla : HDBulletActor
 	{
 		lingeringthunder.zap(hitactor,hitactor,hitactor,20);
 		hdmobbase.forcepain(hitactor);
-		if( hitactor.bshootable && hitactor.mass){
+		if(hitactor.bshootable && hitactor.mass){
 			hitactor.vel.x+=(30.*random(20,25)/hitactor.mass)*randompick(1,-1);
 			hitactor.vel.y+=(30.*random(20,25)/hitactor.mass)*randompick(1,-1);
 			hitactor.vel.z+=30.*random(20,25)/hitactor.mass;
