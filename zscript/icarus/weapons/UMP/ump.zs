@@ -128,7 +128,7 @@ class HDB_45ACPTesla : HDBulletActor
 
 	override void OnHitActor(actor hitactor, vector3 hitpos, vector3 vu, int flags)
 	{
-		lingeringthunder.zap(hitactor,hitactor,hitactor,20);
+		teslathunder.zap(hitactor,hitactor,hitactor,20);
 		hdmobbase.forcepain(hitactor);
 		if(hitactor.bshootable && hitactor.mass){
 			hitactor.vel.x+=(3.*random(20,25)/hitactor.mass)*randompick(1,-1);
