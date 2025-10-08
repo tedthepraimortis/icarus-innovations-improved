@@ -329,11 +329,16 @@ class HDUMP : HDWeapon
 				{
 					SetWeaponState("Shoot");
 				}
+				else if (invoker.WeaponStatus[UMProp_Mag] > 0)
+				{
+					SetWeaponState("ChamberManual");
+				}
 			}
 			Goto Nope;
 		Shoot:
 			UMPG B 3
 			{
+				If(invoker.weaponStatus[UMProp_Mode]==0)A_SetTics(1);
 				A_Overlay(PSP_FLASH, 'Flash');
 
 				A_Light1();
@@ -391,6 +396,10 @@ class HDUMP : HDWeapon
 				if (invoker.WeaponStatus[UMProp_Mag] >= 0)
 				{
 					SetWeaponState('RemoveMag');
+				}
+				else if (invoker.WeaponStatus[UMProp_Chamber] > 0)
+				{
+					SetWeaponState('ChamberManual');
 				}
 			}
 			Goto Nope;
@@ -483,7 +492,8 @@ class HDUMP : HDWeapon
 				}
 			}
 			UMPG A 1 A_UpdateChamberFrame();
-			UMPG # 1 Offset(0, 36) ;
+			UMPG # 1 Offset(0, 36);
+			UMPG # 0 A_JumpIf(!(invoker.WeaponStatus[UMProp_Flags] & UMF_JustUnload) && (invoker.WeaponStatus[UMProp_Chamber] < 2 && invoker.WeaponStatus[UMProp_Mag] > 0), 'ChamberManual');
 			Goto ReloadEnd;
 		ReloadEnd:
 			UMPG A 4 Offset(0,40);
@@ -491,7 +501,6 @@ class HDUMP : HDWeapon
 			#### A 3 Offset(0,33);
 			Goto Nope;
 
-		Altfire:
 		ChamberManual:
 			UMPG A 1 Offset(2, 34) A_UpdateChamberFrame();
 			UMPG C 2 Offset(3, 38);
