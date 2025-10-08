@@ -502,9 +502,9 @@ class HDUMP : HDWeapon
 			Goto Nope;
 
 		ChamberManual:
-			UMPG A 1 Offset(2, 34) A_UpdateChamberFrame();
-			UMPG C 2 Offset(3, 38);
-			UMPG C 2 Offset(4, 44)
+			UMPG A 2 Offset(2, 34) A_UpdateChamberFrame();
+			UMPG C 3 Offset(3, 38);
+			UMPG C 3 Offset(4, 44)
 			{
 				if (invoker.WeaponStatus[UMProp_Chamber] > 0)
 				{
@@ -520,7 +520,7 @@ class HDUMP : HDWeapon
 				}
 				A_UpdateChamberFrame();
 			}
-			UMPG A 1 Offset(3, 38)
+			UMPG A 2 Offset(3, 38)
 			{
 				if (invoker.WeaponStatus[UMProp_Mag] > 0)
 				{
