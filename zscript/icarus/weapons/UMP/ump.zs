@@ -329,10 +329,6 @@ class HDUMP : HDWeapon
 				{
 					SetWeaponState("Shoot");
 				}
-				else if (invoker.WeaponStatus[UMProp_Mag] > 0)
-				{
-					SetWeaponState("ChamberManual");
-				}
 			}
 			Goto Nope;
 		Shoot:
@@ -396,25 +392,21 @@ class HDUMP : HDWeapon
 				{
 					SetWeaponState('RemoveMag');
 				}
-				else if (invoker.WeaponStatus[UMProp_Chamber] > 0)
-				{
-					SetWeaponState('ChamberManual');
-				}
 			}
 			Goto Nope;
 		RemoveMag:
-			UMPG # 2 Offset(0,36)
+			UMPG # 1 Offset(0,36)
 			{
 				A_SetCrosshair(21);
 				A_MuzzleClimb(frandom(-1.2,-2.4),frandom(1.2,2.4));
 			}
-			#### # 2 Offset(1,37);
+			#### # 1 Offset(1,37);
 			#### # 2 Offset(2,38);
-			#### # 2 Offset(3,42);
+			#### # 3 Offset(3,42);
 			#### # 2 Offset(5,44);
 			#### # 2 Offset(6,42);
-			#### # 2 Offset(7,43) A_StartSound("UMP/MagOut",8);
-			#### # 2 Offset(8,42);
+			#### # 1 Offset(7,43) A_StartSound("UMP/MagOut",8);
+			#### # 1 Offset(8,42);
 			#### # 0
 			{
 				if (invoker.WeaponStatus[UMProp_Mag] > -1)
@@ -474,14 +466,14 @@ class HDUMP : HDWeapon
 			}
 			Goto RemoveMag;
 		LoadMag:
-			UMPG # 4 Offset(8,42) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
-			#### # 4 Offset(7,43) A_StartSound("weapons/pocket", 9);
-			#### # 4 Offset(6,42) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
-			#### # 4 Offset(5,44);
+			UMPG # 1 Offset(8,42) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
+			#### # 3 Offset(7,43) A_StartSound("weapons/pocket", 9);
+			#### # 2 Offset(6,42) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
+			#### # 3 Offset(5,44);
 			#### # 4 Offset(3,42);
 			#### # 4 Offset(2,38);
-			#### # 4 Offset(1,37) A_StartSound("UMP/MagIn", 8);
-			#### # 4 Offset(0,36);
+			#### # 3 Offset(1,37) A_StartSound("UMP/MagIn", 8);
+			#### # 2 Offset(0,36);
 			#### A 0
 			{
 				let mag = HDMagAmmo(FindInventory('HDUMPMag'));
@@ -492,18 +484,18 @@ class HDUMP : HDWeapon
 			}
 			UMPG A 1 A_UpdateChamberFrame();
 			UMPG # 1 Offset(0, 36) ;
-			UMPG # 0 A_JumpIf(!(invoker.WeaponStatus[UMProp_Flags] & UMF_JustUnload) && (invoker.WeaponStatus[UMProp_Chamber] < 2 && invoker.WeaponStatus[UMProp_Mag] > 0), 'ChamberManual');
 			Goto ReloadEnd;
 		ReloadEnd:
-			UMPG A 6 Offset(0,40);
-			#### A 2 Offset(0,36);
-			#### A 4 Offset(0,33);
+			UMPG A 4 Offset(0,40);
+			#### A 1 Offset(0,36);
+			#### A 3 Offset(0,33);
 			Goto Nope;
 
+		Altfire:
 		ChamberManual:
-			UMPG A 2 Offset(2, 34) A_UpdateChamberFrame();
+			UMPG A 1 Offset(2, 34) A_UpdateChamberFrame();
 			UMPG C 2 Offset(3, 38);
-			UMPG C 3 Offset(4, 44)
+			UMPG C 2 Offset(4, 44)
 			{
 				if (invoker.WeaponStatus[UMProp_Chamber] > 0)
 				{
@@ -610,7 +602,7 @@ class HDUMPMag : HDMagAmmo
 	Default
 	{
 		HDMagAmmo.MaxPerUnit MagCapacity;
-		HDMagAmmo.InsertTime 7;
+		HDMagAmmo.InsertTime 6;
 		HDMagAmmo.ExtractTime 4;
 		HDMagAmmo.RoundType "HD45ACPAmmo";
 		HDMagAmmo.RoundBulk UMP45ACP_LOADED;
