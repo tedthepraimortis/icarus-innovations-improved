@@ -200,7 +200,7 @@ class HDNyx : HDHandgun
 				
 				A_Light1();
 				A_StartSound("Nyx/Fire", CHAN_WEAPON);
-				HDBulletActor.FireBullet(self, "HDB_355", spread: 1.0, speedfactor: frandom(1.10, 1.15));
+				HDBulletActor.FireBullet(self, "HDB_355N", spread: 1.0, speedfactor: frandom(1.10, 1.15));
 				A_AlertMonsters();
 				A_ZoomRecoil(0.98);
 				invoker.WeaponStatus[NXProp_Chamber] = 1;
@@ -295,8 +295,8 @@ class HDNyx : HDHandgun
 			Goto ChamberManual;
 		RemoveMag:
 			NRLA # 2 Offset(0, 34) A_SetCrosshair(21);
-			NRLA # 2 Offset(1, 38);
-			NRLB # 4 Offset(2, 42);
+			NRLA # 4 Offset(1, 38);
+			NRLB # 6 Offset(2, 42);
 			NRLC # 6 Offset(3, 46) A_StartSound("Nyx/MagOut", 8, CHANF_OVERLAP);
 			#### # 0
 			{
@@ -318,7 +318,7 @@ class HDNyx : HDHandgun
 				}
 			}
 		PocketMag:
-			#### ### 5 Offset(0, 46) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
+			#### ### 6 Offset(0, 46) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
 			Goto MagOut;
 		MagOut:
 			#### # 0
@@ -334,9 +334,9 @@ class HDNyx : HDHandgun
 			}
 		LoadMag:
 			NRLC # 4 Offset(0, 46) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
-			#### # 0 A_StartSound("weapons/pocket", 9);
-			NRLB # 5 Offset(0, 46) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
-			NRLA # 3;
+			#### # 1 A_StartSound("weapons/pocket", 9);
+			NRLB # 6 Offset(0, 46) A_MuzzleClimb(frandom(-0.2, 0.8), frandom(-0.2, 0.4));
+			NRLA # 4;
 			#### # 0
 			{
 				let Mag = HDMagAmmo(FindInventory("HDNyxMag"));
@@ -473,5 +473,30 @@ class HDNyxMag : HDMagAmmo
 				roll = randompick(0, 0, 0, 0, 2, 2, 2, 2, 1, 3) * 90;
 			}
 			Stop;
+	}
+}
+
+class HDB_355N:HDB_355
+{
+	default
+	{
+		// Intended on being a 'Hollow Point' to normal .355. - [Ted]
+		pushfactor 0.6;
+		mass 69;
+		speed HDCONST_MPSTODUPT*550;
+		accuracy 400;
+		stamina 855;
+		woundhealth 30;
+		hdbulletactor.hardness 2;
+
+		/* Base Stats for .355. - [Ted]
+		pushfactor 0.3;
+		mass 99;
+		speed HDCONST_MPSTODUPT*355;
+		accuracy 355;
+		stamina 902;
+		woundhealth 15;
+		hdbulletactor.hardness 3;
+		*/
 	}
 }
