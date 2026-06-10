@@ -20,6 +20,11 @@ server bool bitch_allowBackpacks = true;
 server float bitch_chaingun_spawn_bias = 0.65;
 server bool bitch_persistent_spawning = false;
 
+// Deagle
+server bool deagle_allowBackpacks = true;
+server float deagle_pistol_spawn_bias = 0.5859375;
+server bool deagle_persistent_spawning = false;
+
 // Fenris
 server bool fenris_allowBackpacks = true;
 server float fenris_plasma_spawn_bias = 0.7;
@@ -93,6 +98,11 @@ server bool usp45_persistent_spawning = false;
 // Ammunition
 //------------
 
+// Deagle Magazine
+server bool deaglemag_allowBackpacks = true;
+server float deaglemag_clipmag_spawn_bias = 3.3203125;
+server bool deaglemag_persistent_spawning = false;
+
 // Flamenwerfer Gas Tank
 server bool gastank_allowBackpacks = true;
 server float gastank_rocket_spawn_bias = 0.0666;
@@ -159,6 +169,8 @@ server bool hevarmour_persistent_spawning = false;
 
 server bool hdm_enable_barracuda = true;
 server bool hdm_enable_bitch = true;
+server bool hdm_enable_deagle = true;
+server bool hdm_enable_deaglemag = true;
 server bool hdm_enable_fenris = true;
 server bool hdm_enable_flamenwerfer = true;
 server bool hdm_enable_fog = true;
